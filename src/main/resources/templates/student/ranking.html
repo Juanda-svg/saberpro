@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Ranking de Estudiantes - ICFES</title>
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <!-- Favicon del ICFES (puedes reemplazar esta URL con el favicon oficial si lo tienes) -->
+    <link rel="icon" href="https://www.icfes.gov.co/favicon.ico" type="image/x-icon">
+    <!-- Importar la fuente Roboto desde Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Importar íconos de FontAwesome para los botones y tabla -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        body {
+            background: #E6ECF0; /* Fondo gris claro del ICFES */
+            min-height: 100vh;
+            padding-top: 80px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Fondo animado con patrón sutil */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40"><circle cx="20" cy="20" r="2" fill="rgba(0,48,135,0.1)"/></svg>') repeat;
+            animation: backgroundMove 20s linear infinite;
+            z-index: -1;
+        }
+
+        @keyframes backgroundMove {
+            0% { background-position: 0 0; }
+            100% { background-position: 40px 40px; }
+        }
+
+        /* Estilo del Navbar */
+        .navbar {
+            background: #003087; /* Azul oscuro del ICFES */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar-brand {
+            color: #FFFFFF; /* Blanco */
+            font-weight: 700;
+            font-size: 1.6rem;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .navbar-brand img {
+            height: 40px; /* Ajusta según el tamaño del logotipo */
+        }
+
+        .navbar-nav {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: #FFFFFF;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1.1rem;
+            transition: color 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: #FFC107; /* Amarillo del ICFES */
+        }
+
+        .logout-form button {
+            padding: 10px 20px;
+            border-radius: 25px;
+            background: #FFC107; /* Amarillo del ICFES */
+            color: #003087; /* Azul oscuro para el texto */
+            border: none;
+            font-size: 1rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.2s;
+        }
+
+        .logout-form button:hover {
+            background: #e0a800; /* Amarillo más oscuro */
+            transform: translateY(-2px);
+        }
+
+        /* Contenedor principal */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px 20px;
+            flex-grow: 1;
+        }
+
+        .card {
+            background: #FFFFFF;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 0.5s ease-in;
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            color: #003087; /* Azul oscuro del ICFES */
+            text-align: center;
+            margin-bottom: 30px;
+            font-weight: 700;
+            font-size: 2rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Estilo de la tabla (sobrescribiendo Bootstrap) */
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+            background: #FFFFFF;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .table thead {
+            background: #003087; /* Azul oscuro del ICFES */
+        }
+
+        .table th {
+            padding: 15px;
+            color: #FFFFFF;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 1rem;
+            text-align: center;
+        }
+
+        .table th i {
+            margin-right: 5px;
+        }
+
+        .table td {
+            padding: 15px;
+            text-align: center;
+            border-bottom: 1px solid #E6ECF0; /* Gris claro */
+            color: #333333;
+            font-weight: 400;
+            font-size: 1rem;
+        }
+
+        .table tr {
+            transition: background 0.3s ease;
+            animation: fadeInUp 0.6s ease-in forwards;
+            animation-delay: calc(var(--delay) * 0.1s);
+            opacity: 0;
+        }
+
+        .table tr:hover {
+            background: #F5F7FA; /* Fondo gris claro al hacer hover */
+        }
+
+        /* Estilo de los botones (sobrescribiendo Bootstrap) */
+        .btn {
+            padding: 12px 24px;
+            border-radius: 25px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: transform 0.2s, background 0.3s, box-shadow 0.3s;
+            border: none;
+            font-weight: 500;
+            font-size: 1rem;
+            animation: pulse 1.5s infinite;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: #FFFFFF;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        /* Estilo del footer */
+        footer {
+            text-align: center;
+            padding: 20px;
+            background: #003087; /* Azul oscuro del ICFES */
+            color: #FFFFFF;
+            font-size: 0.9rem;
+            box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        footer a {
+            color: #FFC107; /* Amarillo del ICFES */
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        footer a:hover {
+            color: #e0a800;
+        }
+
+        /* Animaciones */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        /* Responsividad */
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                padding: 10px 20px;
+                gap: 10px;
+            }
+
+            .navbar-nav {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            h2 {
+                font-size: 1.5rem;
+            }
+
+            .table th, .table td {
+                font-size: 0.9rem;
+                padding: 10px;
+            }
+
+            .btn {
+                padding: 10px 20px;
+                font-size: 0.9rem;
+                margin: 5px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+<!-- Navbar -->
+<nav class="navbar">
+    <a class="navbar-brand" href="#">
+       
+        ICFES - SaberPro App
+    </a>
+    <form th:action="@{/logout}" method="post" class="logout-form">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+        <button type="submit">
+            Cerrar Sesión
+            <!-- Ícono de cerrar sesión -->
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0v2z"/>
+                <path fill-rule="evenodd" d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5a.5.5 0 0 0 0 1h9.293l-2.147 2.146a.5.5 0 0 0 .708.708l3-3z"/>
+            </svg>
+        </button>
+    </form>
+</nav>
+
+<!-- Contenido principal -->
+<div class="container">
+    <div class="card">
+        <h2><i class="fas fa-trophy"></i> Ranking de Estudiantes</h2>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th><i class="fas fa-user"></i> Nombres</th>
+                    <th><i class="fas fa-users"></i> Apellidos</th>
+                    <th><i class="fas fa-id-card"></i> Documento</th>
+                    <th><i class="fas fa-star"></i> Puntaje Total</th>
+                    <th><i class="fas fa-level-up-alt"></i> Nivel</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="student : ${students}">
+                    <td th:text="${student.firstName + ' ' + (student.secondName ?: '')}"></td>
+                    <td th:text="${student.firstSurname + ' ' + (student.secondSurname ?: '')}"></td>
+                    <td th:text="${student.documentNumber}"></td>
+                    <td th:text="${student.overallScore}"></td>
+                    <td th:text="${student.scoreLevel}"></td>
+                </tr>
+            </tbody>
+        </table>
+        <a href="/student/dashboard" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Volver
+        </a>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer>
+    © 2025 Instituto Colombiano para la Evaluación de la Educación - ICFES | 
+    <a href="https://www.icfes.gov.co" target="_blank">Visitar sitio oficial</a>
+</footer>
+</body>
+</html>
