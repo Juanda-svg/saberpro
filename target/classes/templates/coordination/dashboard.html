@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Panel de Coordinación</title>
+  <link rel="icon" href="https://www.icfes.gov.co/favicon.ico" type="image/x-icon">
+
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .navbar {
+      background: #003087;;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 1000;
+      padding: 0.8rem 2rem;
+    }
+
+    .navbar-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .navbar-brand {
+      color: white;
+      font-weight: bold;
+      font-size: 1.7rem;
+    }
+
+    .logout-form button {
+      padding: 10px 20px;
+      border-radius: 25px;
+      background: #dc3545;
+      color: white;
+      border: none;
+      font-size: 15px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .logout-form button:hover {
+      background: #c82333;
+    }
+
+    main {
+      flex: 1;
+      padding-top: 110px;
+      padding-bottom: 60px;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: auto;
+      padding: 20px;
+    }
+
+    h2 {
+      color: #002244;
+      text-align: center;
+      margin-bottom: 35px;
+      font-weight: 700;
+      font-size: 2.2rem;
+      animation: fadeInDown 0.7s ease-out;
+    }
+
+    .btn {
+      padding: 12px 25px;
+      border-radius: 30px;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: all 0.3s ease-in-out;
+      border: none;
+      font-weight: 500;
+      font-size: 15px;
+    }
+
+    .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-primary {
+      background: #00ddeb;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #00b7c2;
+    }
+
+    .btn-success {
+      background: #ffc107;
+      color: #212529;
+    }
+
+    .btn-success:hover {
+      background: #e0a800;
+    }
+
+    .card {
+      background: white;
+      padding: 40px 30px;
+      border-radius: 15px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+      animation: fadeInUp 0.8s ease-in-out;
+      margin-bottom: 40px;
+    }
+
+    .btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    .stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: space-around;
+      margin-top: 30px;
+    }
+
+    .stat-box {
+      flex: 1 1 200px;
+      background: #ffffff;
+      border-left: 6px solid #00ddeb;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+      transition: transform 0.2s;
+      animation: fadeIn 1s ease-in-out;
+    }
+
+    .stat-box:hover {
+      transform: scale(1.03);
+    }
+
+    .stat-title {
+      font-weight: 600;
+      color: #002244;
+      margin-bottom: 5px;
+    }
+
+    .stat-value {
+      font-size: 1.5rem;
+      color: #00b7c2;
+    }
+
+	/* Estilo del footer */
+	       footer {
+	           text-align: center;
+	           padding: 20px;
+	           background: #003087; /* Azul oscuro del ICFES */
+	           color: #FFFFFF;
+	           font-size: 0.9rem;
+	           box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.1);
+	       }
+
+	       footer a {
+	           color: #FFC107; /* Amarillo del ICFES */
+	           text-decoration: none;
+	           transition: color 0.3s ease;
+	       }
+
+	       footer a:hover {
+	           color: #e0a800;
+	       }
+    /* Animaciones */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 768px) {
+      .stat-box {
+        text-align: center;
+      }
+
+      .navbar-content {
+        flex-direction: column;
+        gap: 10px;
+      }
+    }
+
+    /* Modal */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+    }
+
+    .modal {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 400px;
+      text-align: center;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+      animation: fadeIn 0.3s ease;
+    }
+
+    .modal h3 {
+      margin-bottom: 15px;
+      color: #002244;
+    }
+
+    .modal-buttons {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 20px;
+    }
+
+    .modal-buttons button {
+      padding: 10px 20px;
+      border-radius: 20px;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+    }
+	
+	.logout-form button {
+	            padding: 10px 20px;
+	            border-radius: 25px;
+	            background: #FFC107; /* Amarillo del ICFES */
+	            color: #003087; /* Azul oscuro para el texto */
+	            border: none;
+	            font-size: 1rem;
+	            font-weight: 500;
+	            display: flex;
+	            align-items: center;
+	            gap: 8px;
+	            cursor: pointer;
+	            transition: background 0.3s ease, transform 0.2s;
+	        }
+
+	        .logout-form button:hover {
+	            background: #e0a800; /* Amarillo más oscuro */
+	            transform: translateY(-2px);
+	        }
+
+
+    .btn-cancel {
+      background: #ccc;
+    }
+
+    .btn-confirm {
+      background: #dc3545;
+      color: white;
+    }
+
+    .btn-confirm:hover {
+      background: #c82333;
+    }
+  </style>
+</head>
+<body>
+	<nav class="navbar">
+	  <div class="navbar-content">
+	    <div class="navbar-brand">ICFES - SaberPro App</div>
+	    <form class="logout-form" onsubmit="event.preventDefault(); openModal();">
+	      <button type="submit"><i class="bi bi-box-arrow-right"></i> Cerrar Sesión</button>
+	    </form>
+	  </div>
+	</nav>
+  <!-- Modal de confirmación -->
+  <div id="logoutModal" class="modal-overlay">
+    <div class="modal">
+      <h3>¿Estás seguro de que deseas cerrar sesión?</h3>
+      <div class="modal-buttons">
+        <button class="btn-cancel" onclick="closeModal()">Cancelar</button>
+        <form th:action="@{/logout}" method="post">
+          <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+          <button type="submit" class="btn-confirm">Cerrar Sesión</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <main>
+    <div class="container">
+      <div class="card">
+        <h2>Panel de Coordinación</h2>
+        <div class="btn-group">
+          <a href="/coordination/students" class="btn btn-primary">
+            <i class="bi bi-people-fill"></i> Ver Estudiantes
+          </a>
+          <a href="/coordination/students/new" class="btn btn-success">
+            <i class="bi bi-plus-circle-fill"></i> Crear Estudiante
+          </a>
+        </div>
+
+        <div class="stats">
+          <div class="stat-box">
+            <div class="stat-title">Estudiantes registrados</div>
+            <div class="stat-value">152</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-title">Evaluaciones completadas</div>
+            <div class="stat-value">89</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-title">Coordinadores activos</div>
+            <div class="stat-value">3</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+      © 2025 Instituto Colombiano para la Evaluación de la Educación - ICFES | 
+      <a href="https://www.icfes.gov.co" target="_blank">Visitar sitio oficial</a>
+  </footer>
+
+  <script>
+    function openModal() {
+      document.getElementById('logoutModal').style.display = 'flex';
+    }
+
+    function closeModal() {
+      document.getElementById('logoutModal').style.display = 'none';
+    }
+  </script>
+</body>
+</html>

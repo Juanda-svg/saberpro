@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Login - SaberPro App</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet">
+	<link rel="icon" href="https://www.icfes.gov.co/favicon.ico" type="image/x-icon">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(to bottom right, #003366, #0055a5);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 90px;
+            color: #333;
+        }
+
+        .navbar {
+            background-color: #002244;
+            padding: 15px 30px;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 999;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+        }
+
+        .navbar-brand {
+            color: #ffffff;
+            font-size: 1.6rem;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .navbar-nav .nav-link {
+            color: #ffffff;
+            margin-left: 20px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: #ffcc00;
+        }
+
+        .card {
+            background: #ffffff;
+            padding: 40px;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            animation: fadeIn 1s ease-out;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #002244;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            transition: border 0.3s;
+        }
+
+        .form-control:focus {
+            border-color: #ffcc00;
+            outline: none;
+        }
+
+        .btn {
+            display: inline-block;
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.2s;
+        }
+
+        .btn-primary {
+            background: #ffcc00;
+            color: #002244;
+        }
+
+        .btn-primary:hover {
+            background: #e6b800;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #0055a5;
+            color: white;
+            margin-top: 10px;
+        }
+
+        .btn-secondary:hover {
+            background: #004080;
+        }
+
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 6px;
+            background: #d1e7dd;
+            color: #0f5132;
+            border: 1px solid #badbcc;
+        }
+
+		table {
+		    min-width: 500px;
+		    width: 100%;
+		    border-collapse: collapse;
+		    margin-top: 10px;
+		    background-color: white;
+		    border-radius: 10px;
+		    overflow: hidden;
+		}
+
+		table thead {
+		    background: #002244;
+		    color: white;
+		}
+
+		table th, table td {
+		    padding: 12px 15px;
+		    border-bottom: 1px solid #ccc;
+		    text-align: center;
+		    word-break: break-word;
+		}
+
+		table tbody tr:hover {
+		    background-color: #f8f9fa;
+		}
+
+		@media (max-width: 600px) {
+		    table {
+		        font-size: 14px;
+		    }
+		}
+		
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+		
+		.cred-table {
+		    min-width: 400px;
+		    width: 100%;
+		    border-collapse: collapse;
+		    font-size: 13px;
+		    background-color: white;
+		    border-radius: 10px;
+		    overflow: hidden;
+		    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+		}
+
+		.cred-table thead {
+		    background: #002244;
+		    color: white;
+		}
+
+		.cred-table th, .cred-table td {
+		    padding: 10px;
+		    text-align: center;
+		    white-space: nowrap;
+		    max-width: 200px;
+		    overflow: hidden;
+		    text-overflow: ellipsis;
+		}
+
+		.cred-table tbody tr:hover {
+		    background-color: #f8f9fa;
+		}
+
+		.truncate {
+		    display: inline-block;
+		    max-width: 180px;
+		    overflow: hidden;
+		    text-overflow: ellipsis;
+		    white-space: nowrap;
+		    vertical-align: middle;
+		}
+
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <a class="navbar-brand" href="#"> ICFES - SaberPro App</a>
+        <div class="navbar-nav">
+            <a class="nav-link" href="/login"><i class="fas fa-sign-in-alt"></i> Iniciar Sesión</a>
+        </div>
+    </nav>
+
+    <div class="card">
+        <h2><i class="fas fa-lock"></i> Iniciar Sesión</h2>
+
+        <div th:if="${param.logout}" class="alert">
+            Has cerrado sesión exitosamente.
+        </div>
+
+        <form th:action="@{/login}" method="post">
+            <label for="username"><i class="fas fa-envelope"></i> Correo:</label>
+            <input type="email" class="form-control" id="username" name="username" required>
+
+            <label for="password"><i class="fas fa-key"></i> Contraseña:</label>
+            <input type="password" class="form-control" id="password" name="password" required>
+
+            <button type="submit" class="btn btn-primary"><i class="fas fa-sign-in-alt"></i> Iniciar Sesión</button>
+        </form>
+
+        <a href="/credentials" class="btn btn-secondary"><i class="fas fa-users"></i> Mostrar Credenciales</a>
+
+		<div th:if="${users}">
+		    <h3 style="margin-top: 30px; color: #002244; text-align: center;">Credenciales en la Base de Datos</h3>
+		    <div style="overflow-x: auto; margin-top: 15px;">
+		        <table class="cred-table">
+		            <thead>
+		                <tr>
+		                    <th>Correo</th>
+		                    <th>Contraseña</th>
+		                    <th>Rol</th>
+		                </tr>
+		            </thead>
+		            <tbody>
+		                <tr th:each="user : ${users}">
+		                    <td>
+		                        <span class="truncate" th:title="${user.email}" th:text="${user.email}"></span>
+		                    </td>
+		                    <td>
+		                        <span class="truncate" th:title="${user.password}" th:text="${user.password}"></span>
+		                    </td>
+		                    <td>
+		                        <span class="truncate" th:title="${user.role}" th:text="${user.role}"></span>
+		                    </td>
+		                </tr>
+		            </tbody>
+		        </table>
+		    </div>
+		</div>
+</body>
+</html>
